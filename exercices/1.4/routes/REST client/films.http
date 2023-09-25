@@ -1,0 +1,14 @@
+/// 1.3
+### Create a movie
+POST http://localhost:3000/films 
+Content-Type: application/json
+
+{
+    "title": "Interstellar",
+    "duration": 169,
+    "budget": 165000000,
+"link": "https://www.imdb.com/title/tt0816692/"
+}
+
+### READ ALL FILMS
+GET http://localhost:3000/films

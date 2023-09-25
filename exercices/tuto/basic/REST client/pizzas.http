@@ -1,0 +1,11 @@
+### Create a pizza
+POST http://localhost:3000/pizzas 
+Content-Type: application/json
+
+{
+    "title": "Magic Green",
+    "content": "Epinards, Brocolis , Olives vertes , Basilic"
+}
+
+### READ ALL PIZZAS
+GET http://localhost:3000/pizzas

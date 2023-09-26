@@ -18,16 +18,19 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 /**Faire l'exercice 1.2  Et ne pas oublier d'ajouter le code dans les autres exercices */
 
-let Stat = [];
 
-app.use("/", (req, res, next) => {
-   const currentOperartion = `${req.method} ${req.path}`;
-   const currentOperartionCounter = Stat[currentOperartion];
-   if (currentOperartion === undefined) Stat[currentOperartion] = 0
-   Stat[currentOperartion += 1]
-   const statsMessage = `Request counter : \n${Object.keys(Stat)
-      .map((operation) => `- ${operation} : ${stats[operation]}`)
-      .join('\n')}`;
+let stats = {};
+app.use((req, res, next) => {
+  const currentOperation = `${req.method} ${req.path}`;
+  const currentOperationCounter = stats[currentOperation];
+  if (currentOperationCounter === undefined) stats[currentOperation] = 0;
+  stats[currentOperation] += 1;
+  const statsMessage = `Request counter : \n${Object.keys(stats)
+    .map((operation) => `- ${operation} : ${stats[operation]}`)
+    .join("\n")}
+      `;
+  console.log(statsMessage);
+  next();
 });
 
 app.use('/', indexRouter);

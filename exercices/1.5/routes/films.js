@@ -49,20 +49,6 @@ router.get("/", (req, res, next) => {
     res.json(filtered);
     return next();
   }
-  if (req.query.order===undefined) {
-    const orderByTitle = req?.query?.order?.includes("title")
-      ? req.query.order
-      : undefined;
-    let orderedFilms;
-    console.log(`order by ${orderByTitle ?? "not requested"}`);
-    if (orderByTitle)
-      orderedMenu = [...CINEMA].sort((a, b) => a.title.localeCompare(b.title));
-    if (orderByTitle === "-title") orderedFilms = orderedFilms.reverse();
-
-    console.log("GET /films");
-    res.json(orderedFilms ?? CINEMA);
-    return next();
-  }
 });
 
 router.get("/:id", (req, res, next) => {
@@ -82,14 +68,6 @@ router.get("/:id", (req, res, next) => {
 /// 1.3 Adding a  new movie
 router.post("/", (req, res, next) => {
   const newTitle = req?.body?.title;
-//1.5
-   let MapTitles = new Map();
-  CINEMA.forEach((film) => MapTitles.set(film.title))
-  if (MapTitles.has(newTitle)) {
-    console.log("Ce titre fait déjà parti du CINEMA") 
-    return res.sendStatus(400);
-  }
-
   const newDuration = req?.body?.duration;
   const newBudget = req?.body?.budget;
   const newLink = req?.body?.link;
@@ -98,6 +76,10 @@ router.post("/", (req, res, next) => {
 //1.5
   if (!newTitle || !newDuration || !newBudget || !newLink)
     return res.sendStatus(400);
+
+  const existingFilm = CINEMA.find((film) => film.title.toLowerCase() === title.toLowerCase());
+
+  if (existingFilm) return res.sendStatus(409);
 
   const newFilm = {
     id: nextId,
@@ -110,11 +92,7 @@ router.post("/", (req, res, next) => {
   CINEMA.push(newFilm);
 
   res.json(newFilm);
-});
+  });
 
-/* 1.4 Read all the pizzas from the cinema
-   GET /films?order=title : ascending order by title
-   GET /films?order=-title : descending order by title
-*/
 
 module.exports = router;

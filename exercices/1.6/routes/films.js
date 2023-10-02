@@ -27,6 +27,24 @@ const CINEMA = [
   },
 ];
 
+// Read all the films, filtered by minimum-duration if the query param exists
+router.get('/', (req, res) => {
+  const minimumFilmDuration = req?.query?.['minimum-duration']
+    ? Number(req.query['minimum-duration'])
+    : undefined;
+
+  if (minimumFilmDuration === undefined) return res.json(films);
+
+  if (typeof minimumFilmDuration !== 'number' || minimumFilmDuration <= 0)
+    return res.sendStatus(400); 
+
+  const filmsReachingMinimumDuration = films.filter(
+    (film) => film.duration >= minimumFilmDuration
+  );
+  return res.json(filmsReachingMinimumDuration);
+});
+
+
 // 1.3 read an id to find it
 router.get("/:id", (req, res, next) => {
   let foundIDFilm = req.params.id;
@@ -83,7 +101,7 @@ router.delete("/:id", (req, res, next) => {
   const itemsRemoved = CINEMA.splice(indexOfFilmFound, 1)
   const itemRemoved = itemsRemoved[0]
   
-  return res.json(itemsRemoved);
+  return res.json(itemRemoved);
 
   });
 

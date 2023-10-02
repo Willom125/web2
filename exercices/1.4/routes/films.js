@@ -31,40 +31,23 @@ const CINEMA = [
 
 //1.3  Read all the films filtered by the uri
 
-router.get("/", (req, res, next) => {
-  let filtered = [];
-  let bearMin = req?.query?.minimum_duration;
-  if (bearMin == undefined) {
-    res.json(CINEMA);
-    return next();
-  } else {
-    bearMin = parseInt(bearMin);
+// Read all the films, filtered by minimum-duration if the query param exists
+router.get('/', (req, res) => {
+  const minimumFilmDuration = req?.query?.['minimum-duration']
+    ? Number(req.query['minimum-duration'])
+    : undefined;
 
-    console.log("les films minimums :" + bearMin + "");
+  if (minimumFilmDuration === undefined) return res.json(films);
 
-    CINEMA.forEach((film) => {
-      if (film.duration >= bearMin) {
-        filtered.push(film);
-      }
-    });
-    res.json(filtered);
-    return next();
-  }
-  if (req.query.order===undefined) {
-    const orderByTitle = req?.query?.order?.includes("title")
-      ? req.query.order
-      : undefined;
-    let orderedFilms;
-    console.log(`order by ${orderByTitle ?? "not requested"}`);
-    if (orderByTitle)
-      orderedMenu = [...CINEMA].sort((a, b) => a.title.localeCompare(b.title));
-    if (orderByTitle === "-title") orderedFilms = orderedFilms.reverse();
+  if (typeof minimumFilmDuration !== 'number' || minimumFilmDuration <= 0)
+    return res.json('Wrong minimum duration'); // bad practise (will be improved in exercise 1.5)
 
-    console.log("GET /films");
-    res.json(orderedFilms ?? CINEMA);
-    return next();
-  }
+  const filmsReachingMinimumDuration = films.filter(
+    (film) => film.duration >= minimumFilmDuration
+  );
+  return res.json(filmsReachingMinimumDuration);
 });
+
 
 router.get("/:id", (req, res, next) => {
   let foundIDFilm = req.params.id;
